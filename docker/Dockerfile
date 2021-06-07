@@ -44,14 +44,14 @@ LABEL authors="VyOS Maintainers <maintainers@vyos.io>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Standard shell should be bash not dash
+# Standard shell should be bash not dash#RUN /usr/sbin/update-ca-certificates
 RUN echo "dash dash/sh boolean false" | debconf-set-selections && \
     dpkg-reconfigure dash
 
 RUN echo -e 'APT::Install-Recommends "0";\nAPT::Install-Suggests "0";' > /etc/apt/apt.conf.d/01norecommends
 
 RUN apt-get update && apt-get install -y \
-      dialog \
+      dialog \#RUN /usr/sbin/update-ca-certificates
       apt-utils \
       locales
 
@@ -537,6 +537,10 @@ RUN apt-get update && apt-get install -y \
       ruby-dev \
       rubygems \
       build-essential
+
+# In case that rubygems recently updated its certs
+RUN echo -n | openssl s_client -showcerts -connect rubygems.org:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /usr/local/share/ca-certificates/rubygemsorg.crt && \
+    update-ca-certificates
 RUN gem install --no-document fpm
 
 # Allow password-less 'sudo' for all users in group 'sudo'
