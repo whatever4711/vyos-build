@@ -51,7 +51,7 @@ RUN echo "dash dash/sh boolean false" | debconf-set-selections && \
 RUN echo -e 'APT::Install-Recommends "0";\nAPT::Install-Suggests "0";' > /etc/apt/apt.conf.d/01norecommends
 
 RUN apt-get update && apt-get install -y \
-      dialog \#RUN /usr/sbin/update-ca-certificates
+      dialog \
       apt-utils \
       locales
 
